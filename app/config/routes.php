@@ -64,6 +64,14 @@ $router->post('api/auth/refresh', 'AuthController::refresh');
 $router->get('api/auth/me', 'AuthController::me');
 $router->post('api/auth/logout', 'AuthController::logout');
 
+// Admin-only user management
+$router->get('api/users', 'UserController::index');
+$router->post('api/users', 'UserController::store');
+$router->get('api/users/{id}', 'UserController::show');
+$router->put('api/users/{id}', 'UserController::update');
+$router->patch('api/users/{id}', 'UserController::update');
+$router->delete('api/users/{id}', 'UserController::destroy');
+
 // Public storefront catalog (read-only)
 $router->get('api/catalog', 'CatalogController::index');
 $router->get('api/catalog/categories', 'CatalogController::categories');

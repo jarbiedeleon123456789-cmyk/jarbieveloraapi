@@ -15,6 +15,10 @@ plus the Database Migration laboratory (CLI command, controller, routes).
 | POST | `/api/auth/refresh` | – | Exchange a refresh token for new tokens |
 | GET | `/api/auth/me` | JWT | Current user |
 | POST | `/api/auth/logout` | – | Revoke a refresh token |
+| GET | `/api/users`, `/api/users/{id}` | Admin | List / show accounts |
+| POST | `/api/users` | Admin | Create an account |
+| PUT / PATCH | `/api/users/{id}` | Admin | Update account details, role, status, or password |
+| DELETE | `/api/users/{id}` | Admin | Delete another account |
 | GET | `/api/catalog`, `/api/catalog/categories` | – | Public read-only storefront |
 | GET | `/api/products`, `/api/products/{id}` | JWT (read) | List / show |
 | POST | `/api/products` | JWT (write) | Create |
@@ -64,3 +68,7 @@ The CLI command lives in `app/commands` (the framework's real folder) and the co
 5. Check `https://your-api.onrender.com/api` returns `{"name":"Velora Parts API",...}`.
 
 Keep `MIGRATION_ENABLED=false` on Render so the browser migration routes stay locked.
+
+User management is restricted to administrators. The API never returns password hashes,
+revokes refresh tokens after password changes or deactivation, and prevents deleting or
+deactivating the last active administrator.

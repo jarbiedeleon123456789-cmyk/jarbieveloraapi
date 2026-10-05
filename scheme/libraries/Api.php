@@ -523,9 +523,10 @@ class Api
     protected function scopes_for_role($role)
     {
         $role_scopes = [
-            'admin'  => ['read', 'write', 'delete'],
-            'editor' => ['read', 'write'],
-            'user'   => ['read'],
+            'admin'     => ['read', 'write', 'delete'],
+            'moderator' => ['read', 'write'],
+            'editor'    => ['read', 'write'],
+            'user'      => ['read'],
         ];
 
         return $role_scopes[$role] ?? ['read'];
@@ -551,12 +552,12 @@ class Api
 
         if ($this->verify_user) {
             $stmt = $this->_lava->db->raw(
-                "SELECT id, role FROM {$this->users_table} WHERE id = ? LIMIT 1",
+                "SELECT id, role, is_active FROM {$this->users_table} WHERE id = ? LIMIT 1",
                 [$payload['sub']]
             );
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$user) {
+            if (!$user || (int) $user['is_active'] !== 1) {
                 $this->respond_error('Unauthorized', 401);
             }
 
@@ -648,12 +649,12 @@ class Api
         }
 
         $user_stmt = $this->_lava->db->raw(
-            "SELECT id, role FROM {$this->users_table} WHERE id = ? LIMIT 1",
+            "SELECT id, role, is_active FROM {$this->users_table} WHERE id = ? LIMIT 1",
             [$payload['sub']]
         );
         $user = $user_stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$user) {
+        if (!$user || (int) $user['is_active'] !== 1) {
             $this->respond_error('User not found', 403);
         }
 

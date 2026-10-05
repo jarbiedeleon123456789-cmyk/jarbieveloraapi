@@ -129,8 +129,8 @@ $config['jwt_verify_user'] = TRUE;
 |--------------------------------------------------------------------------
 |
 | Name of the table holding your users. It needs at least the columns
-| "id" and "role". Used when refreshing tokens and when jwt_verify_user
-| is TRUE.
+| "id", "role", and "is_active". Used when refreshing tokens and when
+| jwt_verify_user is TRUE.
 |
 */
 $config['users_table'] = 'users';
