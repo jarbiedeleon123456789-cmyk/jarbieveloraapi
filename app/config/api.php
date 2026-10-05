@@ -140,12 +140,23 @@ $config['users_table'] = 'users';
 | Access-Control-Allow-Origin
 |--------------------------------------------------------------------------
 |
-| Access-Control-Allow-Origin - change this to your domain if
-| already deployed. '*' allows any website to call your API from
-| a browser, so set your real domain in production.
+| Set ALLOW_ORIGIN to one origin or a comma-separated list of origins.
+| Leave it unset for the backward-compatible wildcard default.
 |
 */
-$config['allow_origin'] = '*';
+$allowed_origins = getenv('ALLOW_ORIGIN');
+if ($allowed_origins === false || trim($allowed_origins) === '') {
+    $config['allow_origin'] = '*';
+} elseif (trim($allowed_origins) === '*') {
+    $config['allow_origin'] = '*';
+} else {
+    $config['allow_origin'] = array_values(array_filter(
+        array_map('trim', explode(',', $allowed_origins)),
+        static function ($origin) {
+            return $origin !== '';
+        }
+    ));
+}
 
 /*
 |--------------------------------------------------------------------------

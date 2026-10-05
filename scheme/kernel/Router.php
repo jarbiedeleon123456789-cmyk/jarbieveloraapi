@@ -438,6 +438,7 @@ class Router
         }
 
         if ($method === 'OPTIONS') {
+            lava_instance()->config->load('api');
             handle_cors();
             http_response_code(204);
             exit;

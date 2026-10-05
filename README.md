@@ -58,7 +58,9 @@ The CLI command lives in `app/commands` (the framework's real folder) and the co
 4. Render → New → Web Service → this repo → Runtime **Docker**. Add environment variables:
    `DB_DRIVER=mysql`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_CHARSET=utf8mb4`,
    `DB_SSL=true`, `DB_SSL_CA_PEM` (CA text, newlines as `\n`), `JWT_SECRET`, `REFRESH_TOKEN_KEY`,
-   `ALLOW_ORIGIN=https://your-frontend.onrender.com`, `MIGRATION_ENABLED=false`.
+   `ALLOW_ORIGIN=https://your-frontend.onrender.com` (comma-separated origins are supported; include
+   `https://api-tester.marasigan.dev` if using that browser-based tester),
+   `MIGRATION_ENABLED=false`.
 5. Check `https://your-api.onrender.com/api` returns `{"name":"Velora Parts API",...}`.
 
 Keep `MIGRATION_ENABLED=false` on Render so the browser migration routes stay locked.
