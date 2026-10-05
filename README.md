@@ -11,7 +11,7 @@ plus the Database Migration laboratory (CLI command, controller, routes).
 
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
-| POST | `/api/auth/login` | – | Log in, returns user + tokens |
+| POST | `/api/auth/login` | – | Log in with email or username; returns user + tokens |
 | POST | `/api/auth/refresh` | – | Exchange a refresh token for new tokens |
 | GET | `/api/auth/me` | JWT | Current user |
 | POST | `/api/auth/logout` | – | Revoke a refresh token |

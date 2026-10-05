@@ -23,16 +23,22 @@ class AuthController extends ApiController
 
         $in = $this->input();
         $email = trim((string) ($in['email'] ?? ''));
+        $username = trim((string) ($in['username'] ?? ''));
+        $identifier = $email !== '' ? $email : $username;
+        $identifier_column = $email !== '' ? 'email' : 'username';
         $password = (string) ($in['password'] ?? '');
 
-        if ($email === '' || $password === '') {
+        if ($identifier === '' || $password === '') {
             $this->fail_validation([
-                'email'    => $email === '' ? 'Email is required' : null,
+                'email'    => $identifier === '' ? 'Email or username is required' : null,
                 'password' => $password === '' ? 'Password is required' : null,
             ]);
         }
 
-        $user = $this->db->raw('SELECT * FROM users WHERE email = ? AND is_active = 1 LIMIT 1', [$email])->fetch(PDO::FETCH_ASSOC);
+        $user = $this->db->raw(
+            "SELECT * FROM users WHERE {$identifier_column} = ? AND is_active = 1 LIMIT 1",
+            [$identifier]
+        )->fetch(PDO::FETCH_ASSOC);
 
         if (!$user || !password_verify($password, $user['password'])) {
             $this->api->respond_error('Invalid email or password', 401);
