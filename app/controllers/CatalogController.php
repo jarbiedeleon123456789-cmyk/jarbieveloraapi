@@ -15,6 +15,7 @@ class CatalogController extends ApiController
     public function index()
     {
         $this->api->require_method('GET');
+        $this->api->require_jwt();
         $this->api->rate_limit('catalog_' . ($_SERVER['REMOTE_ADDR'] ?? 'x'), 120, 60);
         $q = trim((string) ($_GET['q'] ?? ''));
         $category = trim((string) ($_GET['category'] ?? ''));
@@ -25,6 +26,7 @@ class CatalogController extends ApiController
     public function categories()
     {
         $this->api->require_method('GET');
+        $this->api->require_jwt();
         $this->api->respond(['data' => $this->ProductModel->categories()]);
     }
 }

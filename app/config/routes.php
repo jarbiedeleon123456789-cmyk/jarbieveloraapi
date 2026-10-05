@@ -60,6 +60,7 @@ $router->get('api', 'ApiController::index');
 
 // Authentication
 $router->post('api/auth/login', 'AuthController::login');
+$router->post('api/auth/register', 'AuthController::register');
 $router->post('api/auth/refresh', 'AuthController::refresh');
 $router->get('api/auth/me', 'AuthController::me');
 $router->post('api/auth/logout', 'AuthController::logout');

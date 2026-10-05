@@ -53,6 +53,75 @@ class AuthController extends ApiController
         $this->api->respond(['message' => 'Login successful', 'user' => $this->public_user($user), 'tokens' => $tokens]);
     }
 
+    public function register()
+    {
+        $this->api->require_method('POST');
+        $this->api->rate_limit('register_' . ($_SERVER['REMOTE_ADDR'] ?? 'x'), 5, 300);
+
+        $in = $this->input();
+        $username = is_string($in['username'] ?? null) ? trim($in['username']) : '';
+        $email = is_string($in['email'] ?? null) ? strtolower(trim($in['email'])) : '';
+        $password = is_string($in['password'] ?? null) ? $in['password'] : '';
+        $errors = [];
+
+        if ($username === '') {
+            $errors['username'] = 'Username is required';
+        } elseif (mb_strlen($username) > 100) {
+            $errors['username'] = 'Username must be 100 characters or fewer';
+        }
+
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'A valid email address is required';
+        } elseif (mb_strlen($email) > 255) {
+            $errors['email'] = 'Email must be 255 characters or fewer';
+        }
+
+        if (mb_strlen($password) < 8) {
+            $errors['password'] = 'Password must be at least 8 characters';
+        } elseif (mb_strlen($password) > 255) {
+            $errors['password'] = 'Password must be 255 characters or fewer';
+        }
+
+        if ($errors) {
+            $this->fail_validation($errors);
+        }
+
+        $existing = $this->db->raw(
+            'SELECT username, email FROM users WHERE LOWER(email) = ? OR username = ? LIMIT 1',
+            [$email, $username]
+        )->fetch(PDO::FETCH_ASSOC);
+        if ($existing) {
+            $this->api->respond_error(
+                strcasecmp($existing['email'], $email) === 0
+                    ? 'An account with this email already exists'
+                    : 'This username is already taken',
+                409
+            );
+        }
+
+        $this->db->raw(
+            'INSERT INTO users (username, email, password, role, is_active) VALUES (?, ?, ?, ?, 1)',
+            [$username, $email, password_hash($password, PASSWORD_DEFAULT), 'user']
+        );
+        $user = [
+            'id'       => $this->db->last_id(),
+            'username' => $username,
+            'email'    => $email,
+            'role'     => 'user',
+        ];
+        $tokens = $this->api->issue_tokens([
+            'id'     => $user['id'],
+            'role'   => $user['role'],
+            'scopes' => ['read'],
+        ]);
+
+        $this->api->respond([
+            'message' => 'Account created',
+            'user'    => $this->public_user($user),
+            'tokens'  => $tokens,
+        ], 201);
+    }
+
     public function refresh()
     {
         $this->api->require_method('POST');

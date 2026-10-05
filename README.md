@@ -12,6 +12,7 @@ plus the Database Migration laboratory (CLI command, controller, routes).
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
 | POST | `/api/auth/login` | – | Log in with email or username; returns user + tokens |
+| POST | `/api/auth/register` | – | Register a regular customer account; email and username must be unique |
 | POST | `/api/auth/refresh` | – | Exchange a refresh token for new tokens |
 | GET | `/api/auth/me` | JWT | Current user |
 | POST | `/api/auth/logout` | – | Revoke a refresh token |
@@ -19,7 +20,7 @@ plus the Database Migration laboratory (CLI command, controller, routes).
 | POST | `/api/users` | Admin | Create an account |
 | PUT / PATCH | `/api/users/{id}` | Admin | Update account details, role, status, or password |
 | DELETE | `/api/users/{id}` | Admin | Delete another account |
-| GET | `/api/catalog`, `/api/catalog/categories` | – | Public read-only storefront |
+| GET | `/api/catalog`, `/api/catalog/categories` | JWT (read) | Read-only storefront for signed-in customers |
 | GET | `/api/products`, `/api/products/{id}` | JWT (read) | List / show |
 | POST | `/api/products` | JWT (write) | Create |
 | PUT / PATCH | `/api/products/{id}` | JWT (write) | Update |
